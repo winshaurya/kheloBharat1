@@ -55,7 +55,8 @@ canvas {
     display: grid;
     grid-template-columns: 28px 1fr 56px 96px; /* rank | name | score (fixed) | duration (fixed) */
     align-items: center;
-    gap: 12px;
+    column-gap: 20px; /* more horizontal space between columns */
+    gap: 12px 20px; /* row-gap then column-gap fallback */
     padding: 0.6rem 0;
     border-bottom: 1px solid #eee;
 }
@@ -74,6 +75,7 @@ canvas {
     font-weight: bold;
     color: #111111;
     text-align: right;
+    padding-right: 8px; /* add breathing room before duration column */
 }
 
 .score-duration {
@@ -85,6 +87,7 @@ canvas {
 .player-duration {
     color: #111111;
     font-weight: 600;
+    padding-left: 6px; /* small gap from score column */
 }
 
 h2 {
