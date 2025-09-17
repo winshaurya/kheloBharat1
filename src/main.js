@@ -1,8 +1,10 @@
 function generatePlayerData(id) {
+    // durationSeconds: integer seconds between 0 and 15 minutes (0..900)
+    const durationSeconds = Math.floor(Math.random() * 901);
     return {
         id: id,
-        score: Math.floor(Math.random() * 1000),
-        duration: (Math.floor(Math.random() * 86400) / 3600).toFixed(2)
+        score: Math.floor(Math.random() * 100),
+        durationSeconds // store numeric seconds for calculations
     };
 }
 
@@ -12,8 +14,16 @@ for (let i = 1; i <= 44; i++) {
     playerSessions.push(generatePlayerData(`Player ${i}`));
 }
 
-const totalDuration = playerSessions.reduce((sum, session) => sum + parseFloat(session.duration), 0);
-const avgDuration = (totalDuration / playerSessions.length).toFixed(2);
+const totalDurationSeconds = playerSessions.reduce((sum, session) => sum + session.durationSeconds, 0);
+const avgDurationSeconds = totalDurationSeconds / playerSessions.length;
+
+function formatDuration(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}m ${s}s`;
+}
+
+const avgDuration = formatDuration(Math.round(avgDurationSeconds));
 
 const totalScore = playerSessions.reduce((sum, session) => sum + session.score, 0);
 const avgScore = (totalScore / playerSessions.length).toFixed(2);
@@ -25,7 +35,7 @@ const topPlayers = playerSessions
 
 document.getElementById('stats').innerHTML = `
     <h2>Stats Overview</h2>
-    <p><strong>Average Duration:</strong> ${avgDuration} hours</p>
+    <p><strong>Average Duration:</strong> ${avgDuration}</p>
     <p><strong>Average Score:</strong> ${avgScore}</p>
 `;
 
@@ -48,6 +58,18 @@ const scoreChart = new Chart(ctx, {
             y: {
                 beginAtZero: true
             }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const idx = context.dataIndex;
+                        const player = playerSessions[idx];
+                        // show score and formatted duration in tooltip
+                        return [`Score: ${player.score}`, `Duration: ${formatDuration(player.durationSeconds)}`];
+                    }
+                }
+            }
         }
     }
 });
@@ -55,5 +77,6 @@ const scoreChart = new Chart(ctx, {
 const leaderboardDiv = document.getElementById('leaderboard');
 leaderboardDiv.innerHTML = '<h2>Leaderboard</h2>';
 topPlayers.forEach((player, index) => {
-    leaderboardDiv.innerHTML += `<div class="leaderboard-entry"><span class="rank">${index + 1}.</span><span class="player-name">${player.id}</span><span class="player-score">${player.score}</span></div>`;
+    // Render leaderboard as a four-column row: rank | name | score | duration
+    leaderboardDiv.innerHTML += `\n<div class="leaderboard-entry">\n  <span class="rank">${index + 1}.</span>\n  <span class="player-name">${player.id}</span>\n  <span class="player-score">${player.score}</span>\n  <span class="player-duration">${formatDuration(player.durationSeconds)}</span>\n</div>`;
 });
