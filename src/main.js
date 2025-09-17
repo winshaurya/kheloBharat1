@@ -55,6 +55,5 @@ const scoreChart = new Chart(ctx, {
 const leaderboardDiv = document.getElementById('leaderboard');
 leaderboardDiv.innerHTML = '<h2>Leaderboard</h2>';
 topPlayers.forEach((player, index) => {
-    leaderboardDiv.innerHTML += `<p>${index + 1}. ${player.id} - Score: ${player.score}</p>`;
+    leaderboardDiv.innerHTML += `<div class="leaderboard-entry"><span class="rank">${index + 1}.</span><span class="player-name">${player.id}</span><span class="player-score">${player.score}</span></div>`;
 });
-
